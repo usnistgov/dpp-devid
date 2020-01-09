@@ -1,34 +1,43 @@
 # dpp-devid
 
-Scripts to onboard a device with Device certificates. This requires the fork of hostap with support for iDevID which is available here.
+Scripts to onboard a device using DPP with Device certificates. This requires the fork of hostap with support for iDevID which is available here.
 
     https://github.com/ranganathanm/hostap  
 
-Please clone and build it. This is just the User Interface.
+Please clone and build it. This repository publishes a user interface, certificates and script to test out DPP.
 
-Install zbar-tools (for reading qr codes -- configurator only)
+Configurator: Install zbar-tools (for reading qr codes -- configurator only)
 
         sudo apt-get install zbar-tools
         sudo apt-get install libzbar-dev
 
-Install the python wrapper for zbar and the python image library to read qr codes (configurator only )
+COnfigurator: Install the python wrapper for zbar and the python image library to read qr codes (configurator only )
 
         pip install Pillow
         pip install zbarlight
 
-Install netifaces to read the network interface MAC address
-
-        pip install netifaces
-
-Install pyside (for GUI -- configurator only)
+Configurator: Install pyside (for GUI -- configurator only)
 
          sudo apt-get install python-pyside
 
-Enrolle : copy wpa_supplicant.example into wpa_supplicant.orig, Edit wpa_supplicant.orig 
-and point it at the IDEVID certificate.
+Configurator and Enrolle: Install netifaces to read the network interface MAC address
+
+        pip install netifaces
+
+Enrollee: copy wpa_supplicant.example into wpa_supplicant.orig, Edit wpa_supplicant.orig 
+and point it at the DevId certificate. 
 
          cd scripts/enrollee 
 	 cp wpa_supplicant.example wpa_supplicant.orig
+
+Enrollee: Start the enrolle as follows. 
+
+         cd scripts/enrollee 
+         # preserve the contents of wpa_supplicant so we can see what DPP did
+         cp wpa_supplicant.conf.orig wpa_supplicant.conf
+         # Start the enrollee
+         sudo python enrollee.py --if wlan1 --pkey /home/pi/dpp-devid/test/DevID50/DevIDSecrets/IDevID50.key.der --cf ./wpa_supplicant.conf
+
 
 
 ## Notes ##
