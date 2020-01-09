@@ -95,7 +95,7 @@ class MainWindow(QMainWindow):
                 ShowCertWindow(stdout,self)
 
     def doScanQrCode(self):
-        f = open("/home/mranga/dpp-devid/test/qr-codes/hello-world-qr-code.png",'rb')
+        f = open("/home/mranga/dpp-devid/test/qr-codes/dpp-qr-code.png",'rb')
         qr = PIL.Image.open(f)
         qr.load()
         codes = zbarlight.scan_codes('qrcode',qr)
