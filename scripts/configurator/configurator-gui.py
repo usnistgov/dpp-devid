@@ -96,14 +96,35 @@ class MainWindow(QMainWindow):
             else:
                 ShowCertWindow(stdout,self)
 
-    def doScanQrCode(self):
-        # TODO -- camera scan here
-        f = open("/home/pi/dpp-devid/test/qr-codes/dpp-qr-code.png",'rb')
+    def doSelectQrCodeImage(self):
+        fname = QFileDialog.getOpenFileName(self, 'Open Image file',
+                                            './', "PNG files (*.png)")
+        f = open(fname[0])
         qr = PIL.Image.open(f)
         qr.load()
         codes = zbarlight.scan_codes('qrcode',qr)
         print(codes[0])
         self.dppUri.setText(codes[0])
+
+    def doScanQrCode(self):
+        print 'Taking picture..'
+        while True :
+            self.camera.start_preview()
+            time.sleep(1)
+            self.camera.capture("qr-code.jpg")
+            self.camera.stop_preview()
+
+            #f = open("../../test/qr-codes/dpp-qr-code.png",'rb')
+            f = open("qr-code.jpg",'rb')
+            qr = PIL.Image.open(f)
+            qr.load()
+            codes = zbarlight.scan_codes('qrcode',qr)
+            if codes is not None:
+                break
+
+        print(codes[0])
+        self.dppUri.setText(codes[0])
+
 
     def doSelectCaCertPath(self):
         fname = QFileDialog.getOpenFileName(self, 'Open file',
@@ -131,11 +152,15 @@ class MainWindow(QMainWindow):
         row += 1
         dppUriLabel = QLabel("DPP URI: ")
         self.dppUri = QLineEdit()
-        scanPushButton = QPushButton("Scan QR Code", self)
+        scanPushButton = QPushButton("Scan", self)
         scanPushButton.clicked.connect(self.doScanQrCode)
+        readQrCodePushButton = QPushButton("Select",self)
+        readQrCodePushButton.clicked.connect(self.doSelectQrCodeImage)
         gridLayout.addWidget(dppUriLabel, row, 0)
         gridLayout.addWidget(self.dppUri, row, 1)
-        gridLayout.addWidget(scanPushButton, row, 2)
+        gridLayout.addWidget(readQrCodePushButton,row,2)
+        gridLayout.addWidget(scanPushButton, row, 3)
+
 
         row += 1
         caCertLabel = QLabel("CA Cert")
@@ -159,7 +184,7 @@ class MainWindow(QMainWindow):
 
         self.myStatusBar = QStatusBar()
         self.setStatusBar(self.myStatusBar)
-        self.myStatusBar.showMessage("Information Needed")
+        self.myStatusBar.showMessage("Note: start wpa_supplicant using start_wpas.sh")
 
 
 if __name__ == "__main__":
