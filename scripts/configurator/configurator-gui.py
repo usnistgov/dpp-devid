@@ -3,6 +3,7 @@ import os
 import subprocess
 import PIL
 import zbarlight
+import configurator
 from PySide import QtGui
 from PySide.QtGui import QWidget, QApplication, QMainWindow, QStatusBar, QTextEdit, \
     QAction, QIcon, QKeySequence, QMessageBox, QFormLayout, QLabel, QLineEdit,\
@@ -75,6 +76,7 @@ class MainWindow(QMainWindow):
                                     QMessageBox.Ok)
         else:
             print("onBoarding")
+            configurator.onboard(self.ssId.text(),self.password.text(), self.caCertPath.text(), self.dppUri.text())
 
     def doViewCertificate(self):
         print("doViewCertificate")
@@ -95,11 +97,13 @@ class MainWindow(QMainWindow):
                 ShowCertWindow(stdout,self)
 
     def doScanQrCode(self):
-        f = open("/home/mranga/dpp-devid/test/qr-codes/dpp-qr-code.png",'rb')
+        # TODO -- camera scan here
+        f = open("/home/pi/dpp-devid/test/qr-codes/dpp-qr-code.png",'rb')
         qr = PIL.Image.open(f)
         qr.load()
         codes = zbarlight.scan_codes('qrcode',qr)
         print(codes[0])
+        self.dppUri.setText(codes[0])
 
     def doSelectCaCertPath(self):
         fname = QFileDialog.getOpenFileName(self, 'Open file',
