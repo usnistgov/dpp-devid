@@ -65,14 +65,15 @@ if __name__ == "__main__":
         print(retval)
         while os.path.getsize(args.cf) == fsz :
             print("Waiting for configuration")
-	        time.sleep(3)
+	    time.sleep(3)
         
         run_cmd(sta_clicmd + ["save_config"])
         print("Reloading the config file\n")
         run_cmd(sta_clicmd + ["reconfigure"])
     except Exception as ex:
-        print("run start_wpas.sh first!)
+        print("\nERROR: run start_wpas.sh first!")
         print(ex)
+        print( sys.exc_info()[0])
         
       
 
