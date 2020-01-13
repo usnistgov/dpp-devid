@@ -96,9 +96,10 @@ class MainWindow(QMainWindow):
             else:
                 ShowCertWindow(stdout,self)
 
-    def doReadQrCode(self):
-        # TODO -- camera scan here
-        f = open("/home/pi/dpp-devid/test/qr-codes/dpp-qr-code.png",'rb')
+    def doSelectQrCodeImage(self):
+        fname = QFileDialog.getOpenFileName(self, 'Open Image file',
+                                            './', "PNG files (*.png)")
+        f = open(fname)
         qr = PIL.Image.open(f)
         qr.load()
         codes = zbarlight.scan_codes('qrcode',qr)
@@ -120,6 +121,7 @@ class MainWindow(QMainWindow):
             codes = zbarlight.scan_codes('qrcode',qr)
             if codes is not None:
                 break
+
         print(codes[0])
         self.dppUri.setText(codes[0])
 
@@ -152,7 +154,8 @@ class MainWindow(QMainWindow):
         self.dppUri = QLineEdit()
         scanPushButton = QPushButton("Scan", self)
         scanPushButton.clicked.connect(self.doScanQrCode)
-        readQrCodePushButton = QPushButton("Select image",self)
+        readQrCodePushButton = QPushButton("Select",self)
+        readQrCodePushButton.clicked.connect(self.doSelectQrCodeImage)
         gridLayout.addWidget(dppUriLabel, row, 0)
         gridLayout.addWidget(self.dppUri, row, 1)
         gridLayout.addWidget(readQrCodePushButton,row,2)
