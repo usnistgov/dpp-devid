@@ -1,4 +1,3 @@
-import time
 import sys
 import os
 import subprocess
@@ -9,7 +8,7 @@ from PySide import QtGui
 from PySide.QtGui import QWidget, QApplication, QMainWindow, QStatusBar, QTextEdit, \
     QAction, QIcon, QKeySequence, QMessageBox, QFormLayout, QLabel, QLineEdit,\
     QGridLayout, QPushButton, QDesktopWidget, QFileDialog, QVBoxLayout
-from picamera import PiCamera   
+
 
 class ShowCertWindow(QMainWindow):
 
@@ -42,13 +41,12 @@ class MainWindow(QMainWindow):
         """
         super(MainWindow, self).__init__()
         self.initGUI()
-        self.camera = PiCamera()
 
     def initGUI(self):
         self.setWindowTitle("Configurator")
         appIcon = QIcon('logo.png')
         self.setWindowIcon(appIcon)
-        self.setGeometry(300, 250, 500, 300)
+        self.setGeometry(300, 250, 400, 300)
         self.SetLayout()
         self.center()
         self.show()
@@ -78,12 +76,7 @@ class MainWindow(QMainWindow):
                                     QMessageBox.Ok)
         else:
             print("onBoarding")
-            try:
-               configurator.onboard(self.ssId.text(),self.password.text(), self.caCertPath.text(), self.dppUri.text())
-            except:
-                QMessageBox.information(self, "Error Onboarding", "wpa_supplicant started? ",
-                                    QMessageBox.Ok)
-              
+            configurator.onboard(self.ssId.text(),self.password.text(), self.caCertPath.text(), self.dppUri.text())
 
     def doViewCertificate(self):
         print("doViewCertificate")
@@ -103,8 +96,16 @@ class MainWindow(QMainWindow):
             else:
                 ShowCertWindow(stdout,self)
 
-    def doScanQrCode(self):
+    def doReadQrCode(self):
         # TODO -- camera scan here
+        f = open("/home/pi/dpp-devid/test/qr-codes/dpp-qr-code.png",'rb')
+        qr = PIL.Image.open(f)
+        qr.load()
+        codes = zbarlight.scan_codes('qrcode',qr)
+        print(codes[0])
+        self.dppUri.setText(codes[0])
+
+    def doScanQrCode(self):
         print 'Taking picture..'
         while True :
             self.camera.start_preview()
@@ -121,6 +122,7 @@ class MainWindow(QMainWindow):
                 break
         print(codes[0])
         self.dppUri.setText(codes[0])
+
 
     def doSelectCaCertPath(self):
         fname = QFileDialog.getOpenFileName(self, 'Open file',
@@ -176,7 +178,7 @@ class MainWindow(QMainWindow):
 
         self.myStatusBar = QStatusBar()
         self.setStatusBar(self.myStatusBar)
-        self.myStatusBar.showMessage("Ensure wpa_supplicant with Enhanced DPP support is running")
+        self.myStatusBar.showMessage("Information Needed")
 
 
 if __name__ == "__main__":
