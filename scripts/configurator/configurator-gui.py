@@ -99,7 +99,7 @@ class MainWindow(QMainWindow):
     def doSelectQrCodeImage(self):
         fname = QFileDialog.getOpenFileName(self, 'Open Image file',
                                             './', "PNG files (*.png)")
-        f = open(fname)
+        f = open(fname[0])
         qr = PIL.Image.open(f)
         qr.load()
         codes = zbarlight.scan_codes('qrcode',qr)
@@ -184,7 +184,7 @@ class MainWindow(QMainWindow):
 
         self.myStatusBar = QStatusBar()
         self.setStatusBar(self.myStatusBar)
-        self.myStatusBar.showMessage("Information Needed")
+        self.myStatusBar.showMessage("Note: start wpa_supplicant using start_wpas.sh")
 
 
 if __name__ == "__main__":
