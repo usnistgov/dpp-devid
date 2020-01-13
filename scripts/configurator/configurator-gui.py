@@ -152,9 +152,11 @@ class MainWindow(QMainWindow):
         self.dppUri = QLineEdit()
         scanPushButton = QPushButton("Scan QR Code", self)
         scanPushButton.clicked.connect(self.doScanQrCode)
+        readQrCodePushButton = QPushButton("Read QR Code",self)
         gridLayout.addWidget(dppUriLabel, row, 0)
         gridLayout.addWidget(self.dppUri, row, 1)
         gridLayout.addWidget(scanPushButton, row, 2)
+        gridLayout.addWidget(readQrCodePushButton,row,3)
 
         row += 1
         caCertLabel = QLabel("CA Cert")
