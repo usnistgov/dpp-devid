@@ -14,7 +14,6 @@ def run_cmd(cmd):
 def convert_to_hex(priv_key_file):
     with open(priv_key_file, mode="rb") as file:
         fileContent = file.read()
-
     hex_str = binascii.b2a_hex(fileContent)
     return hex_str
 
@@ -51,25 +50,30 @@ if __name__ == "__main__":
     
     sta_clicmd = ["/usr/local/sbin/wpa_cli", "-p", "/var/run/wpa_supplicant2"]
 
-    dpp_configurator_id = run_cmd( sta_clicmd + ['dpp_configurator_add', 'key=' + dpp_configurator_key, "curve=prime256v1"])
-    bootstrapping_info_id = run_cmd( sta_clicmd + ["dpp_bootstrap_gen" , "type=qrcode", "mac=" + mac_addr, "key=" + dpp_configurator_key] )
-    print("bootstrapping_info_id " + str(bootstrapping_info_id))
-    #Get QR Code of device using the bootstrap info id.
-    print("enrollee: get the qr code using the returned bootstrap_info_id\n")
-
-    bootstrapping_uri = "'" + run_cmd(sta_clicmd + ["dpp_bootstrap_get_uri" , str(bootstrapping_info_id)])+ "'"
-    print("bootstrapping_uri = " + bootstrapping_uri + "\n")
-    bootstrap_info = run_cmd(sta_clicmd + ["dpp_bootstrap_info" , bootstrapping_info_id])
-    print("bootstrapping_info = " + bootstrap_info)
-    print("enrollee: listen for dpp provisioning request\n")
-    retval = run_cmd(sta_clicmd + ["dpp_listen" , str(2437)] )
-    print(retval)
-    while os.path.getsize(args.cf) == fsz :
-        print("Waiting for configuration")
-	time.sleep(3)
+    try:
+        dpp_configurator_id = run_cmd( sta_clicmd + ['dpp_configurator_add', 'key=' + dpp_configurator_key, "curve=prime256v1"])
+        bootstrapping_info_id = run_cmd( sta_clicmd + ["dpp_bootstrap_gen" , "type=qrcode", "mac=" + mac_addr, "key=" + dpp_configurator_key] )
+        print("bootstrapping_info_id " + str(bootstrapping_info_id))
+        #Get QR Code of device using the bootstrap info id.
+        print("enrollee: get the qr code using the returned bootstrap_info_id\n")
+        bootstrapping_uri = "'" + run_cmd(sta_clicmd + ["dpp_bootstrap_get_uri" , str(bootstrapping_info_id)])+ "'"
+        print("bootstrapping_uri = " + bootstrapping_uri + "\n")
+        bootstrap_info = run_cmd(sta_clicmd + ["dpp_bootstrap_info" , bootstrapping_info_id])
+        print("bootstrapping_info = " + bootstrap_info)
+        print("enrollee: listen for dpp provisioning request\n")
+        retval = run_cmd(sta_clicmd + ["dpp_listen" , str(2437)] )
+        print(retval)
+        while os.path.getsize(args.cf) == fsz :
+            print("Waiting for configuration")
+	        time.sleep(3)
         
-    run_cmd(sta_clicmd + ["save_config"])
-    print("Reloading the config file\n")
-    run_cmd(sta_clicmd + ["reconfigure"])
+        run_cmd(sta_clicmd + ["save_config"])
+        print("Reloading the config file\n")
+        run_cmd(sta_clicmd + ["reconfigure"])
+    except Exception as ex:
+        print("run start_wpas.sh first!)
+        print(ex)
+        
+      
 
 
