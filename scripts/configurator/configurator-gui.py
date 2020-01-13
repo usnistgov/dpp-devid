@@ -158,6 +158,7 @@ class MainWindow(QMainWindow):
         gridLayout.addWidget(scanPushButton, row, 2)
         gridLayout.addWidget(readQrCodePushButton,row,3)
 
+
         row += 1
         caCertLabel = QLabel("CA Cert")
         self.caCertPath = QLineEdit()
