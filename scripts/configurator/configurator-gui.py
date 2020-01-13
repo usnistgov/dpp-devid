@@ -150,13 +150,13 @@ class MainWindow(QMainWindow):
         row += 1
         dppUriLabel = QLabel("DPP URI: ")
         self.dppUri = QLineEdit()
-        scanPushButton = QPushButton("Scan QR Code", self)
+        scanPushButton = QPushButton("Scan", self)
         scanPushButton.clicked.connect(self.doScanQrCode)
-        readQrCodePushButton = QPushButton("Read QR Code",self)
+        readQrCodePushButton = QPushButton("Select image",self)
         gridLayout.addWidget(dppUriLabel, row, 0)
         gridLayout.addWidget(self.dppUri, row, 1)
-        gridLayout.addWidget(scanPushButton, row, 2)
-        gridLayout.addWidget(readQrCodePushButton,row,3)
+        gridLayout.addWidget(readQrCodePushButton,row,2)
+        gridLayout.addWidget(scanPushButton, row, 3)
 
 
         row += 1
