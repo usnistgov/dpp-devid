@@ -1,0 +1,3 @@
+[submodule "hostap"]
+	path = hostap
+	url = git@github.com:ranganathanm/hostap.git
