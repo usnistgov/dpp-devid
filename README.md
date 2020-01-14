@@ -1,12 +1,55 @@
 # dpp-devid
 
-This repository publishes a user interface, certificates and script to test out DPP with device iD support.
-Scripts to onboard a device using DPP with Device certificates. This requires the fork of hostap with support for iDevID and 802.1AR cert generation scripts. 
+This repository publishes a user interface, certificates and scripts to test out DPP with device iD support.
+This requires the fork of hostap with support for iDevID and 802.1AR cert generation scripts. This is included 
+as a git submodule. Another script to generate Device Identifier certificates is included as a second submodule.
+
+The following is a summary of the interactions:
+
+As in standard DPP, the DPP url contains the public key of the device
+certificate (not the full certificate). The IOT device (enrollee)
+publishes this as a QR code.  This is scanned by Configurator which does
+an authentication of the supplicant.  The authentication is based on
+the public key of the certificate (not the full certificate).  (The DPP
+url itself only contains the raw public key. ) Thus far it is standard
+DPP behavior.
+
+After authentication, the supplicant sends a configuration request,
+requesting network credentials.
+
+The following enhancement was added to DPP. This is not part of the standard protocol.
+
+The configuration request sent by the supplicant has the IDevID
+certificate. The verification step (performed by the Configuration during
+processing of the configuration request) checks the certificate to see if
+the public key of the DPP url matches the public key of the certificate
+and also verifies the certificate based on the CA certificate. If
+certificate verifies, the configurator sends network credentials
+information to the supplicant, thereby onboarding the supplicant.
+
+The assumptions are :
+
+* The device certificate is assumed be shipped with the device.
+* The device has the private key in a tamper proof store and uses this to complete the authentication with the configurator.
+  This is the same key that was used to generate the device certificate.
+* The configurator has the CA certificate from the manufacturer.
+
+# Hardware requirements
+
+You need two Raspberry Pi's with USB wireless cards to try this out.
+One of the raspberry Pi's is called the "configurator". This is the application that will onboard the second
+Raspberry Pi (the enrollee).
+
+# Procedure
+
+On each raspberry Pi :
+
+
 Please clone this repository using to fetch the necessary submodules.
 
          git clone --recurse-submodules
 
-Copy the config files for building and build wpa-supplicant / hostapd
+Copy the config files for building and build wpa-supplicant / hostapd and build them. This is done using the build.sh script.
    
        sh build.sh
 
@@ -52,6 +95,12 @@ Configurator:  start the configurator.
         sudo -E python configurator_gui.py
 
 
+# Limitations
+
+
+
+* The DPP scanning code is not reliable. You can scan the QR codes from a png file on the configurator.
+* There is no feedback on the configurator indicating success of certificate verification.
 
 
 
