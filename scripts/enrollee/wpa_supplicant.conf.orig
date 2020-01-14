@@ -1,9 +1,0 @@
-ctrl_interface=/var/run/wpa_supplicant2
-ctrl_interface_group=0
-update_config=1
-pmf=1
-dpp_mud_url=https://www.nist.local/nistmud1
-dpp_idevid=/home/pi/dpp-devid/test/DevID50/DevIDCredentials/IDevID50.cert.pem
-dpp_name=MyDpp
-dpp_config_processing=2
-

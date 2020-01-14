@@ -11,4 +11,4 @@ else
 	echo "wpa_supplicant is running pid is '$pid'"
 fi
 sudo ifconfig wlan1 0
-sudo python enrollee.py --if wlan1 --pkey $PROJECT_HOME/test/DevID50/DevIDSecrets/IDevID50.key.der --cf ./wpa_supplicant.conf
+sudo python supplicant.py --if wlan1 --pkey $PROJECT_HOME/test/DevID50/DevIDSecrets/IDevID50.key.der --cf ./wpa_supplicant.conf

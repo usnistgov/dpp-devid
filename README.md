@@ -3,11 +3,16 @@
 This repository publishes a user interface, certificates and scripts to test out DPP with device iD support.
 This requires the fork of hostap with support for iDevID and 802.1AR cert generation scripts. This is included 
 as a git submodule. Another script to generate Device Identifier certificates is included as a second submodule.
+Following are the submodules included:
+
+   https://github.com/ranganathanm/hostap
+   https://github.com/MonikaSinghNIST/iDevIDCerts
+
 
 The following is a summary of the interactions:
 
 As in standard DPP, the DPP url contains the public key of the device
-certificate (not the full certificate). The IOT device (enrollee)
+certificate (not the full certificate). The IOT device (supplicant)
 publishes this as a QR code.  This is scanned by Configurator which does
 an authentication of the supplicant.  The authentication is based on
 the public key of the certificate (not the full certificate).  (The DPP
@@ -17,14 +22,15 @@ DPP behavior.
 After authentication, the supplicant sends a configuration request,
 requesting network credentials.
 
-The following enhancement was added to DPP. This is not part of the standard protocol.
+The following enhancement was added to DPP in the hostap submodule. 
+(NOTE: This is not part of the standard DPP 1.0 protocol.)
 
 The configuration request sent by the supplicant has the IDevID
-certificate. The verification step (performed by the Configuration during
+certificate. The verification step (performed by the Configurator during
 processing of the configuration request) checks the certificate to see if
 the public key of the DPP url matches the public key of the certificate
-and also verifies the certificate based on the CA certificate. If
-certificate verifies, the configurator sends network credentials
+and also verifies the certificate chain based on the CA certificate. If
+the presented iDevID certificate verifies, the configurator sends network credentials
 information to the supplicant, thereby onboarding the supplicant.
 
 The assumptions are :
@@ -38,7 +44,7 @@ The assumptions are :
 
 You need two Raspberry Pi's with USB wireless cards to try this out.
 One of the raspberry Pi's is called the "configurator". This is the application that will onboard the second
-Raspberry Pi (the enrollee).
+Raspberry Pi (the supplicant).
 
 # Procedure
 
@@ -76,13 +82,13 @@ Set the PROJECT_HOME enviornment variable to the place where you installed this 
 Enrollee: copy wpa_supplicant.example into wpa_supplicant.orig, Edit wpa_supplicant.orig 
 and point it at the DevId certificate.  This is done for you in the start_wpas.sh script.
 
-       cd scripts/enrollee 
+       cd scripts/supplicant 
        ./start_wpas.sh
 
 Enrollee: Start the enrolle as follows. 
 
-         cd scripts/enrollee 
-         # Start the enrollee
+         cd scripts/supplicant 
+         # Start the supplicant
          sudo python enrollee.py --if wlan1 --pkey $PROJECT_HOME/test/DevID50/DevIDSecrets/IDevID50.key.der --cf ./wpa_supplicant.conf
 
 Configurator: start wpa supplicant
