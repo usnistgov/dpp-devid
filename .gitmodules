@@ -1,3 +1,6 @@
 [submodule "hostap"]
 	path = hostap
 	url = git@github.com:ranganathanm/hostap.git
+[submodule "iDevIDCerts"]
+	path = iDevIDCerts
+	url = git@github.com:/MonikaSinghNIST/iDevIDCerts.git

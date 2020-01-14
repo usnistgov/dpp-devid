@@ -1,10 +1,14 @@
 # dpp-devid
 
-Scripts to onboard a device using DPP with Device certificates. This requires the fork of hostap with support for iDevID which is available here.
+This repository publishes a user interface, certificates and script to test out DPP with device iD support.
+Scripts to onboard a device using DPP with Device certificates. This requires the fork of hostap with support for iDevID and 802.1AR cert generation scripts. 
+Please clone this repository using to fetch the necessary submodules.
 
-    https://github.com/ranganathanm/hostap  
+         git clone --recurse-submodules
 
-Please clone and build it. This repository publishes a user interface, certificates and script to test out DPP.
+Copy the config files for building and build wpa-supplicant / hostapd
+   
+       sh build.sh
 
 Configurator: Install zbar-tools (for reading qr codes -- configurator only)
 
@@ -24,19 +28,30 @@ Configurator and Enrolle: Install netifaces to read the network interface MAC ad
 
         pip install netifaces
 
-Enrollee: copy wpa_supplicant.example into wpa_supplicant.orig, Edit wpa_supplicant.orig 
-and point it at the DevId certificate. 
+Set the PROJECT_HOME enviornment variable to the place where you installed this repository.
 
-         cd scripts/enrollee 
-	 cp wpa_supplicant.example wpa_supplicant.orig
+Enrollee: copy wpa_supplicant.example into wpa_supplicant.orig, Edit wpa_supplicant.orig 
+and point it at the DevId certificate.  This is done for you in the start_wpas.sh script.
+
+       cd scripts/enrollee 
+       ./start_wpas.sh
 
 Enrollee: Start the enrolle as follows. 
 
          cd scripts/enrollee 
-         # preserve the contents of wpa_supplicant so we can see what DPP did
-         cp wpa_supplicant.conf.orig wpa_supplicant.conf
          # Start the enrollee
-         sudo python enrollee.py --if wlan1 --pkey /home/pi/dpp-devid/test/DevID50/DevIDSecrets/IDevID50.key.der --cf ./wpa_supplicant.conf
+         sudo python enrollee.py --if wlan1 --pkey $PROJECT_HOME/test/DevID50/DevIDSecrets/IDevID50.key.der --cf ./wpa_supplicant.conf
+
+Configurator: start wpa supplicant
+
+        cd scripts/configurator
+        ./start_wpas.sh
+
+Configurator:  start the configurator.
+         
+        sudo -E python configurator_gui.py
+
+
 
 
 
