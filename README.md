@@ -1,15 +1,19 @@
 # dpp-devid
 
 This repository publishes a user interface, certificates and scripts to test out DPP with device iD support.
-This requires the fork of hostap with support for iDevID and 802.1AR cert generation scripts. This is included 
-as a git submodule. Another script to generate Device Identifier certificates is included as a second submodule.
+
+Important: This is a proposed extension to wifi-easyconnect (AKA DPP) but it is not part of the standard.
+
+This project requires the fork of hostap with support for iDevID and 802.1AR cert generation scripts. 
 Following are the submodules included:
 
    https://github.com/ranganathanm/hostap
+   
+   
    https://github.com/MonikaSinghNIST/iDevIDCerts
 
 
-The following is a summary of the interactions:
+The following is a summary of the interactions exercised by the script (via wpa\_supplicant):
 
 As in standard DPP, the DPP url contains the public key of the device
 certificate (not the full certificate). The IOT device (supplicant)
