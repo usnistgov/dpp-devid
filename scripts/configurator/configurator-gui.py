@@ -75,7 +75,7 @@ class MainWindow(QMainWindow):
             QMessageBox.information(self, "Information needed", "Please supply all needed information",
                                     QMessageBox.Ok)
         else:
-            print("onBoarding")
+            print("python configurator.py --ssid " + self.ssId.text() + " --passwd " + self.password.text() + " --ca " + self.caCertPath.text() + " --bootstrapping-uri " + self.dppUri.text()  )
             configurator.onboard(self.ssId.text(),self.password.text(), self.caCertPath.text(), self.dppUri.text())
 
     def doViewCertificate(self):
@@ -95,6 +95,23 @@ class MainWindow(QMainWindow):
                     self, "Error decoding certificate", stderr.decode('utf-8'), QMessageBox.Ok)
             else:
                 ShowCertWindow(stdout,self)
+
+    def doViewDeviceCertificate(self):
+	print("doViewDeviceCertificate")
+        if not os.path.exists("iDevId.pem"):
+		QMessageBox.information(self, "Device certificate not found", "Please onboard device",QMessageBox.Ok)
+		return
+        cmd = ["openssl", "x509", "-text", "-noout", "-in", "iDevId.pem"]
+        proc = subprocess.Popen(
+        cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = proc.communicate()
+        if stderr != "":
+            print(stderr)
+            QMessageBox.information(
+                 self, "Error decoding certificate - onboarding failed.", stderr.decode('utf-8'), QMessageBox.Ok)
+        else:
+            ShowCertWindow(stdout,self)
+
 
     def doSelectQrCodeImage(self):
         fname = QFileDialog.getOpenFileName(self, 'Open Image file',
@@ -176,11 +193,15 @@ class MainWindow(QMainWindow):
         onboardButton.clicked.connect(self.doOnboard)
         viewCertButton = QPushButton("View CA Certificate", self)
         viewCertButton.clicked.connect(self.doViewCertificate)
+        viewDevCertButton = QPushButton("View Device Certificate",self)
+        viewDevCertButton.clicked.connect(self.doViewDeviceCertificate)
+
         quitButton = QPushButton("Quit")
         quitButton.clicked.connect(self.doQuit)
         gridLayout.addWidget(onboardButton, row, 0)
         gridLayout.addWidget(viewCertButton, row, 1)
-        gridLayout.addWidget(quitButton, row, 2)
+        gridLayout.addWidget(viewDevCertButton, row, 2)
+        gridLayout.addWidget(quitButton, row, 3)
 
         self.myStatusBar = QStatusBar()
         self.setStatusBar(self.myStatusBar)

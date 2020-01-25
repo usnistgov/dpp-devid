@@ -6,6 +6,7 @@ import argparse
 import binascii
 import argparse
 import sys
+import json
 
 
 def run_cmd(cmd):
@@ -52,7 +53,7 @@ def onboard(ssid_txt,passwd,cacertpath,bootstrapping_uri):
     cmd = cli_cmd + [ 'dpp_configurator_add']
     dpp_configurator_id = run_cmd(cmd)
     print ("Configurator ID = " + dpp_configurator_id)
-    print("Configurator: Self sign the configurator object\n")
+    #print("Configurator: Self sign the configurator object\n")
     cmd = cli_cmd  +  ["dpp_configurator_sign", "conf=sta-psk", "psk="+psk, "ssid="+ssid, "configurator=" + str(dpp_configurator_id)]
     retval = run_cmd(cmd)
     print(retval)
@@ -61,7 +62,24 @@ def onboard(ssid_txt,passwd,cacertpath,bootstrapping_uri):
     print("bootstrapping_info_id " + str(bootstrapping_info_id))
     cmd = cli_cmd + ['dpp_auth_init', "peer={} conf=sta-psk ssid={} psk={} configurator={} cacert={}".format(bootstrapping_info_id,ssid,psk, dpp_configurator_id ,cacertpath)]
     retval = run_cmd(cmd)
-    print (retval)
+    time.sleep(3)
+    cmd = cli_cmd + ["dpp_config_status", "id={}".format(str(dpp_configurator_id))]
+    retval = run_cmd(cmd)
+    try:
+    	print(retval)
+    	jsonval = json.loads(retval)
+    	mud_url = jsonval["config_status"]["mud_url"]
+    	idevid = jsonval["config_status"]["idevid"]
+    	f = open("iDevId.pem","w")
+    	f.write(idevid)
+    	f.close()
+    except:
+        print("Onboarding status not found")
+
+    cmd = cli_cmd + ["dpp_configurator_remove", str(dpp_configurator_id)]
+    retval = run_cmd(cmd)
+    print(retval)
+    time.sleep(3)
 
 
 if __name__ == "__main__":
@@ -72,11 +90,6 @@ if __name__ == "__main__":
     parser.add_argument("--bootstrapping-uri", help="The DPP bootstrapping URI ", default=None)
     args = parser.parse_args()
     
-    #bootstrapping_uri = 'DPP:M:00:13:ef:20:1d:6b;K:MDkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDIgADiD1AnX/e2cvUgAmR1hXk9Vn8zAs0fWr/Vh/177YP2Us=;;'
-    #cwd = os.path.realpath(os.getcwd())
-    #cacertpath="{}/DevID50/CredentialChain/ca-chain.cert.pem".format(cwd)
-    #ssid_txt="0024A5AFF6CF"
-    #passwd="xubr6cx9i8424"
 
     bootstrapping_uri = args.bootstrapping_uri
     ssid_txt = args.ssid
