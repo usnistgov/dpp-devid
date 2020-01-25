@@ -61,7 +61,8 @@ if __name__ == "__main__":
         bootstrap_info = run_cmd(sta_clicmd + ["dpp_bootstrap_info" , bootstrapping_info_id])
         print("bootstrapping_info = " + bootstrap_info)
         print("enrollee: listen for dpp provisioning request\n")
-        retval = run_cmd(sta_clicmd + ["dpp_listen" , str(2437)] )
+        #retval = run_cmd(sta_clicmd + ["dpp_listen" , str(2437)] )
+        retval = run_cmd(sta_clicmd + ["dpp_listen" , str(2412)] )
         print(retval)
         while os.path.getsize(args.cf) == fsz :
             print("Waiting for configuration")
@@ -70,6 +71,10 @@ if __name__ == "__main__":
         run_cmd(sta_clicmd + ["save_config"])
         print("Reloading the config file\n")
         run_cmd(sta_clicmd + ["reconfigure"])
+        time.sleep(2)
+        p = subprocess.Popen(["/sbin/dhclient", interface],shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        res,err = p.communicate()
+        
     except Exception as ex:
         print("run start_wpas.sh first!")
         print(ex)
