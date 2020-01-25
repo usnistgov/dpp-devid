@@ -41,7 +41,6 @@ def onboard(ssid_txt,passwd,cacertpath,bootstrapping_uri, mudserver_host):
 
     print("Psk = " + psk + "\n")
 
-
     cli_cmd = ["/usr/local/sbin/wpa_cli", "-p", "/var/run/wpa_supplicant1"]
 
     cmd = cli_cmd+ ["get_capability","dpp"]
@@ -102,13 +101,9 @@ def onboard(ssid_txt,passwd,cacertpath,bootstrapping_uri, mudserver_host):
         print(r)       
         headers= {"Content-Type":"application/json"}
         r = requests.put(url, data=json.dumps(mapping), headers=headers , auth=('admin', 'admin'))
-        if int(r.status_code /2) != 1 :
-            print("posting to MUD server failed!")
+        print(str(r))
     else:
         print("onboarding failed ")
-
-	
-    
 
 
 

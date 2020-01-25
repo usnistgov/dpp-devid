@@ -99,10 +99,10 @@ class MainWindow(QMainWindow):
                 ShowCertWindow(stdout,self)
 
     def doViewDeviceCertificate(self):
-	print("doViewDeviceCertificate")
+        print("doViewDeviceCertificate")
         if not os.path.exists("iDevId.pem"):
-		QMessageBox.information(self, "Device certificate not found", "Please onboard device",QMessageBox.Ok)
-		return
+            QMessageBox.information(self, "Device certificate not found", "Please onboard device",QMessageBox.Ok)
+            return
         cmd = ["openssl", "x509", "-text", "-noout", "-in", "iDevId.pem"]
         proc = subprocess.Popen(
         cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
