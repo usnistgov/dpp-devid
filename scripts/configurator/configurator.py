@@ -14,7 +14,7 @@ def run_cmd(cmd):
     res,err = p.communicate()
     return str(res.split('\n')[1])
 
-def onboard(ssid_txt,passwd,cacertpath,bootstrapping_uri):
+def onboard(ssid_txt,passwd,cacertpath,bootstrapping_uri, mudserver_host):
     if bootstrapping_uri is None or ssid_txt is None or \
        cacertpath is None or passwd is None:
        print("missing parameters -- can't run script exit.")
@@ -65,6 +65,8 @@ def onboard(ssid_txt,passwd,cacertpath,bootstrapping_uri):
     time.sleep(3)
     cmd = cli_cmd + ["dpp_config_status", "id={}".format(str(dpp_configurator_id))]
     retval = run_cmd(cmd)
+    mud_url = None
+    idevid = None
     try:
     	print(retval)
     	jsonval = json.loads(retval)
@@ -74,12 +76,31 @@ def onboard(ssid_txt,passwd,cacertpath,bootstrapping_uri):
     	f.write(idevid)
     	f.close()
     except:
-        print("Onboarding status not found")
+        print("Onboarding status info not found")
 
     cmd = cli_cmd + ["dpp_configurator_remove", str(dpp_configurator_id)]
     retval = run_cmd(cmd)
-    print(retval)
-    time.sleep(3)
+    # Note this should be a password protected https connection but for test purposes we use this.
+    url = "http://" + mudserver_host + ":8181/restconf/config/nist-mud-controllerclass-mapping:controllerclass-mapping"
+    pieces = bootstrapping_uri.split(";")
+    mac_addr = pieces[0][len("DPP:M:"):]
+    print("mac_addr = " , mac_addr)
+    if mud_url is not None and idevid is not None :
+        device_association = {}
+        device_id=[mac_addr]
+        device_association["device-id"] = device_id
+        device_association["mud-url"] = mud_url
+        mapping = {}
+        mapping["mapping"] = device_association
+        r = json.dumps(mapping) 
+        print(r)
+        loaded_r = json.loads(r)
+    else:
+        print("onboarding failed ")
+
+	
+    
+
 
 
 if __name__ == "__main__":
@@ -88,6 +109,7 @@ if __name__ == "__main__":
     parser.add_argument("--ssid", help="SSID for the network", default=None)
     parser.add_argument("--passwd", help="Password for the network (text)", default=None)
     parser.add_argument("--bootstrapping-uri", help="The DPP bootstrapping URI ", default=None)
+    parser.add_argument("--mudserver-host", help="The MUD server host", default=None)
     args = parser.parse_args()
     
 
@@ -95,7 +117,8 @@ if __name__ == "__main__":
     ssid_txt = args.ssid
     cacertpath = args.ca
     passwd = args.passwd
-    onboard(ssid_txt,passwd,cacertpath,bootstrapping_uri)
+    mudserver = args.mudserver_host
+    onboard(ssid_txt,passwd,cacertpath,bootstrapping_uri,mudserver)
 
     
 
