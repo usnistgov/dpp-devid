@@ -106,6 +106,10 @@ def onboard(ssid_txt,passwd,cacertpath,bootstrapping_uri, mudserver_host):
         print("onboarding failed ")
 
 
+	
+    
+
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
