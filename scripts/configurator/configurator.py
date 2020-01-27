@@ -7,6 +7,8 @@ import binascii
 import argparse
 import sys
 import json
+import requests
+
 
 
 def run_cmd(cmd):
@@ -80,12 +82,16 @@ def onboard(ssid_txt,passwd,cacertpath,bootstrapping_uri, mudserver_host):
 
     cmd = cli_cmd + ["dpp_configurator_remove", str(dpp_configurator_id)]
     retval = run_cmd(cmd)
-    # Note this should be a password protected https connection but for test purposes we use this.
-    url = "http://" + mudserver_host + ":8181/restconf/config/nist-mud-controllerclass-mapping:controllerclass-mapping"
-    pieces = bootstrapping_uri.split(";")
-    mac_addr = pieces[0][len("DPP:M:"):]
-    print("mac_addr = " , mac_addr)
-    if mud_url is not None and idevid is not None :
+   
+    # Send information out to the MUD server. This should be protected with
+    # Two factor authentication from the MUD server.
+    if mud_url is not None and idevid is not None and mudserver_host is not None:
+        # Note this should be a https connection but for test purposes we use http.
+        # This is test code -- works with NIST-MUD only.
+        url = "http://" + mudserver_host + ":8181/restconf/config/nist-mud-controllerclass-mapping:controllerclass-mapping"
+        pieces = bootstrapping_uri.split(";")
+        mac_addr = pieces[0][len("DPP:M:"):]
+        print("mac_addr = " , mac_addr)
         device_association = {}
         device_id=[mac_addr]
         device_association["device-id"] = device_id
@@ -93,8 +99,11 @@ def onboard(ssid_txt,passwd,cacertpath,bootstrapping_uri, mudserver_host):
         mapping = {}
         mapping["mapping"] = device_association
         r = json.dumps(mapping) 
-        print(r)
-        loaded_r = json.loads(r)
+        print(r)       
+        headers= {"Content-Type":"application/json"}
+        r = requests.put(url, data=json.dumps(mapping), headers=headers , auth=('admin', 'admin'))
+        if int(r.status_code /2) != 1 :
+            print("posting to MUD server failed!")
     else:
         print("onboarding failed ")
 
