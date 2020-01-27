@@ -7,7 +7,9 @@ import configurator
 from PySide import QtGui
 from PySide.QtGui import QWidget, QApplication, QMainWindow, QStatusBar, QTextEdit, \
     QAction, QIcon, QKeySequence, QMessageBox, QFormLayout, QLabel, QLineEdit,\
-    QGridLayout, QPushButton, QDesktopWidget, QFileDialog, QVBoxLayout
+    QGridLayout, QPushButton, QDesktopWidget, QFileDialog, QVBoxLayout, QCheckBox,QToolTip 
+	
+
 
 
 class ShowCertWindow(QMainWindow):
@@ -75,8 +77,9 @@ class MainWindow(QMainWindow):
             QMessageBox.information(self, "Information needed", "Please supply all needed information",
                                     QMessageBox.Ok)
         else:
-            print("python configurator.py --ssid " + self.ssId.text() + " --passwd " + self.password.text() + " --ca " + self.caCertPath.text() + " --bootstrapping-uri " + self.dppUri.text()  )
-            configurator.onboard(self.ssId.text(),self.password.text(), self.caCertPath.text(), self.dppUri.text())
+            print("python configurator.py --ssid " + self.ssId.text() + " --passwd " + self.password.text()
+                 + " --ca " + self.caCertPath.text() + " --bootstrapping-uri " + self.dppUri.text() + "--mudserver-host " +self.mudServerAddress.text() )
+            configurator.onboard(self.ssId.text(),self.password.text(), self.caCertPath.text(), self.dppUri.text(), self.mudServerAddress.text())
 
     def doViewCertificate(self):
         print("doViewCertificate")
@@ -187,6 +190,13 @@ class MainWindow(QMainWindow):
         gridLayout.addWidget(caCertLabel, row, 0)
         gridLayout.addWidget(self.caCertPath, row, 1)
         gridLayout.addWidget(certPathButton, row, 2)
+
+        mudServerLavel = QLabel("MUD Server")
+        self.mudServerAddress = QLineEdit()
+        self.uploadMudUrlCheckbox = QCheckBox()
+        self.uploadMudUrlCheckbox.setCheckState(True)
+        self.uploadMudUrlCheckbox.setToolTip(QToolTip("Send MUD URL to MUD Server?"))
+        gridLayout.addWidget(mudServerLabel,row,0)
 
         row += 1
         onboardButton = QPushButton("Onboard", self)
