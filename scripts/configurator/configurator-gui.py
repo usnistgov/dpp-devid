@@ -77,9 +77,14 @@ class MainWindow(QMainWindow):
             QMessageBox.information(self, "Information needed", "Please supply all needed information",
                                     QMessageBox.Ok)
         else:
-            print("python configurator.py --ssid " + self.ssId.text() + " --passwd " + self.password.text()
-                 + " --ca " + self.caCertPath.text() + " --bootstrapping-uri " + self.dppUri.text() + "--mudserver-host " +self.mudServerAddress.text() )
             configurator.onboard(self.ssId.text(),self.password.text(), self.caCertPath.text(), self.dppUri.text(), self.mudServerAddress.text())
+
+    def doViewCommand(self):
+            cmd = "python configurator.py --ssid " + self.ssId.text() + " --passwd " + self.password.text() + \
+	 	   " --ca " + self.caCertPath.text() + " --bootstrapping-uri " + "\"" + self.dppUri.text()  + "\"" + \
+		   " --mudserver-host " +self.mudServerAddress.text() 
+            QMessageBox.information(self, "Command",  cmd, QMessageBox.Ok)
+
 
     def doViewCertificate(self):
         print("doViewCertificate")
@@ -191,27 +196,35 @@ class MainWindow(QMainWindow):
         gridLayout.addWidget(self.caCertPath, row, 1)
         gridLayout.addWidget(certPathButton, row, 2)
 
-        mudServerLavel = QLabel("MUD Server")
+        row += 1
+        mudServerLabel = QLabel("MUD Server")
         self.mudServerAddress = QLineEdit()
-        self.uploadMudUrlCheckbox = QCheckBox()
-        self.uploadMudUrlCheckbox.setCheckState(True)
-        self.uploadMudUrlCheckbox.setToolTip(QToolTip("Send MUD URL to MUD Server?"))
+        #self.uploadMudUrlCheckbox = QCheckBox()
+        #self.uploadMudUrlCheckbox.setToolTip(QToolTip("Send MUD URL to MUD Server?"))
         gridLayout.addWidget(mudServerLabel,row,0)
+        gridLayout.addWidget(self.mudServerAddress,row,1)
 
         row += 1
         onboardButton = QPushButton("Onboard", self)
         onboardButton.clicked.connect(self.doOnboard)
+
         viewCertButton = QPushButton("View CA Certificate", self)
         viewCertButton.clicked.connect(self.doViewCertificate)
+
         viewDevCertButton = QPushButton("View Device Certificate",self)
         viewDevCertButton.clicked.connect(self.doViewDeviceCertificate)
 
+        outputCommand = QPushButton("Show Command")
+        outputCommand.clicked.connect(self.doViewCommand)
+
         quitButton = QPushButton("Quit")
         quitButton.clicked.connect(self.doQuit)
+
         gridLayout.addWidget(onboardButton, row, 0)
         gridLayout.addWidget(viewCertButton, row, 1)
         gridLayout.addWidget(viewDevCertButton, row, 2)
-        gridLayout.addWidget(quitButton, row, 3)
+        gridLayout.addWidget(outputCommand, row, 3)
+        gridLayout.addWidget(quitButton, row, 4)
 
         self.myStatusBar = QStatusBar()
         self.setStatusBar(self.myStatusBar)

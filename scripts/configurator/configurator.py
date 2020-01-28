@@ -88,7 +88,7 @@ def onboard(ssid_txt,passwd,cacertpath,bootstrapping_uri, mudserver_host):
     if mud_url is not None and idevid is not None and mudserver_host is not None:
         # Note this should be a https connection but for test purposes we use http.
         # This is test code -- works with NIST-MUD only.
-        url = "http://" + mudserver_host + ":8181/restconf/config/nist-mud-controllerclass-mapping:controllerclass-mapping"
+        url = "http://" + mudserver_host + ":8181/restconf/config/nist-mud-device-association:mapping"
         pieces = bootstrapping_uri.split(";")
         mac_addr = pieces[0][len("DPP:M:"):]
         print("mac_addr = " , mac_addr)
@@ -102,8 +102,7 @@ def onboard(ssid_txt,passwd,cacertpath,bootstrapping_uri, mudserver_host):
         print(r)       
         headers= {"Content-Type":"application/json"}
         r = requests.put(url, data=json.dumps(mapping), headers=headers , auth=('admin', 'admin'))
-        if int(r.status_code /2) != 1 :
-            print("posting to MUD server failed!")
+	print("status code = " + str(r.status_code))
     else:
         print("onboarding failed ")
 
