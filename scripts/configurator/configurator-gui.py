@@ -10,6 +10,7 @@ from PySide.QtGui import QWidget, QApplication, QMainWindow, QStatusBar, QTextEd
     QGridLayout, QPushButton, QDesktopWidget, QFileDialog, QVBoxLayout, QCheckBox,QToolTip
 
 
+
 class ShowCertWindow(QMainWindow):
 
     def __init__(self, certText,parent=None):
@@ -192,7 +193,6 @@ class MainWindow(QMainWindow):
         mudServerLavel = QLabel("MUD Server")
         self.mudServerAddress = QLineEdit()
         self.uploadMudUrlCheckbox = QCheckBox()
-        self.uploadMudUrlCheckbox.setCheckState(True)
         self.uploadMudUrlCheckbox.setToolTip(QToolTip("Send MUD URL to MUD Server?"))
         gridLayout.addWidget(mudServerLabel,row,0)
 
