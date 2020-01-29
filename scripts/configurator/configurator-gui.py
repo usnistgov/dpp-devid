@@ -176,6 +176,16 @@ class MainWindow(QMainWindow):
         gridLayout.addWidget(self.password, row, 1)
 
         row += 1
+        mudServerLabel = QLabel("MUD Server")
+        self.mudServerAddress = QLineEdit()
+        self.mudServerAddress.setText("203.0.113.7")
+        #self.uploadMudUrlCheckbox = QCheckBox()
+        #self.uploadMudUrlCheckbox.setToolTip(QToolTip("Send MUD URL to MUD Server?"))
+        gridLayout.addWidget(mudServerLabel,row,0)
+        gridLayout.addWidget(self.mudServerAddress,row,1)
+
+
+        row += 1
         dppUriLabel = QLabel("DPP URI: ")
         self.dppUri = QLineEdit()
         scanPushButton = QPushButton("Scan", self)
@@ -187,23 +197,16 @@ class MainWindow(QMainWindow):
         gridLayout.addWidget(readQrCodePushButton,row,2)
         gridLayout.addWidget(scanPushButton, row, 3)
 
-
         row += 1
         caCertLabel = QLabel("CA Cert")
         self.caCertPath = QLineEdit()
+        self.caCertPath.setText("/home/pi/dpp-devid/test/test-devid/ca/certs/root.cert.pem")
         certPathButton = QPushButton("Select")
         certPathButton.clicked.connect(self.doSelectCaCertPath)
         gridLayout.addWidget(caCertLabel, row, 0)
         gridLayout.addWidget(self.caCertPath, row, 1)
         gridLayout.addWidget(certPathButton, row, 2)
 
-        row += 1
-        mudServerLabel = QLabel("MUD Server")
-        self.mudServerAddress = QLineEdit()
-        #self.uploadMudUrlCheckbox = QCheckBox()
-        #self.uploadMudUrlCheckbox.setToolTip(QToolTip("Send MUD URL to MUD Server?"))
-        gridLayout.addWidget(mudServerLabel,row,0)
-        gridLayout.addWidget(self.mudServerAddress,row,1)
 
         row += 1
         onboardButton = QPushButton("Onboard", self)

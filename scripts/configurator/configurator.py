@@ -81,6 +81,7 @@ def onboard(ssid_txt,passwd,cacertpath,bootstrapping_uri, mudserver_host):
 
     cmd = cli_cmd + ["dpp_configurator_remove", str(dpp_configurator_id)]
     retval = run_cmd(cmd)
+    time.sleep(2)
    
     # Send information out to the MUD server. This should be protected with
     # Two factor authentication from the MUD server.
