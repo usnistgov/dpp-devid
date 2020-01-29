@@ -2,12 +2,18 @@ import sys
 import os
 import subprocess
 from PySide import QtGui
-from PySide.QtGui import QWidget, QApplication, QMainWindow, QPushButton, QGridLayout, QDesktopWidget, QIcon, QLineEdit
-from PySide.QtCore import QSize
+from PySide.QtGui import QWidget, QApplication, QMainWindow, QPushButton, QGridLayout, QDesktopWidget, QIcon, QLineEdit, QStatusBar
+from PySide.QtCore import QSize, Signal, Slot
+from PySide import QtCore
 import filecmp
 import shutil
 import os
+import time
+import subprocess
 from threading import Timer,Thread,Event
+
+class FooConnection(QtCore.QObject):
+       foosignal = Signal(str)
 
 
 class MainWindow(QMainWindow):
@@ -16,6 +22,8 @@ class MainWindow(QMainWindow):
         """
         super(MainWindow, self).__init__()
         self.initGUI()
+        self.mysignal = FooConnection()
+        self.mysignal.foosignal.connect(self.updateGui)
 
     def initGUI(self):
         self.setWindowTitle("Enrollee")
@@ -23,21 +31,7 @@ class MainWindow(QMainWindow):
         self.center()
         self.setLayout()
         self.show()
-        thread = Timer(5,self.checkState)
-        thread.start()
        
-
-    def startWpas() :
-        os.system("sudo pkill wpa_supplicant")
-        cmd = "/usr/local/sbin/wpa_supplicant -c%s/scripts/supplicant/wpa_supplicant.conf  -i%s -Dnl80211,wext -dd -f /tmp/debug.txt" \
-                .format(os.environ.get("PROJECT_HOME"),"wlan1")
-        os.spawnl(os.P_NOWAIT,cmd)
-        os.system("ifconfig %s 0".format("wlan1"))
-        cmd = "python supplicant.py --if wlan1 --pkey %s/test/DevID50/DevIDSecrets/IDevID50.key.der --cf ./wpa_supplicant.conf"\
-                    .format(os.environ.get("PROJECT_HONE"))
-        os.spawnl(os.P_NOWAIT,cmd)
-        
-
 
     def center(self):
         """ Function to center the application
@@ -48,19 +42,33 @@ class MainWindow(QMainWindow):
         qRect.moveCenter(centerPoint)
         # move my window to the moved rectangle.
         self.move(qRect.topLeft())
+
+    @Slot()
+    def updateGui(self):
+        interface = "wlan1"
+        self.rebootButton.setIcon(self.happyDuckIcon)
+        self.myStatusBar.showMessage("Waiting for DHCP address.")
+        p = subprocess.Popen(["/sbin/dhclient", interface],shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        res,err = p.communicate()
+        self.myStatusBar.showMessage("Done!")
+
     
-    def checkState(self):
-        self.checkFiles()
-        thread = Timer(5,self.checkState)
-        thread.start()
+
+    def run_cmd(self, cmd):
+        p = subprocess.Popen(cmd,shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        res,err = p.communicate()
+        return res.split('\n')[1]
     
     def checkFiles(self):
-        if filecmp.cmp ("wpa_supplicant.conf","wpa_supplicant.conf.orig") :
-            self.rebootButton.setIcon(self.duckIcon)
+        print("checking")
+        if not filecmp.cmp ("wpa_supplicant.conf","wpa_supplicant.conf.orig") :
+            self.mysignal.foosignal.emit("onboarded")
         else:
-            self.rebootButton.setIcon(self.happyDuckIcon)
-        
+       	    self.thread = Timer(5,self.checkFiles)
+            self.thread.start()
 
+   
+        
     
     def reboot(self):
         shutil.copyfile("wpa_supplicant.conf.orig","wpa_supplicant.conf")
@@ -69,8 +77,11 @@ class MainWindow(QMainWindow):
 
     
     def setLayout(self):
+        self.myStatusBar = QStatusBar()
+        self.setStatusBar(self.myStatusBar)
+
         self.duckIcon = QIcon("duck.jpeg")
-        self.happyDuckIcon  = QIcon("happy-duck.jpg")
+        self.happyDuckIcon  = QIcon("happy-duck.jpeg")
         qWidget = QWidget()
         gridLayout = QGridLayout(qWidget)
         row = 0
@@ -82,7 +93,19 @@ class MainWindow(QMainWindow):
         self.rebootButton.setIconSize(QSize(200,200))
         gridLayout.addWidget(self.rebootButton,row,0)
         self.rebootButton.clicked.connect(self.reboot)
-        self.checkFiles()
+     
+
+        if filecmp.cmp ("wpa_supplicant.conf","wpa_supplicant.conf.orig") :
+            self.myStatusBar.showMessage("Waiting to onboard.")
+            self.rebootButton.setIcon(self.duckIcon)
+       	    self.thread = Timer(5,self.checkFiles)
+            self.thread.start()
+        else:
+            self.rebootButton.setIcon(self.happyDuckIcon)
+            self.myStatusBar.showMessage("waiting for DHCP address")
+            interface = "wlan1"
+            p = subprocess.Popen(["/sbin/dhclient", interface],shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            res,err = p.communicate()
         
         
 
@@ -90,15 +113,13 @@ class MainWindow(QMainWindow):
 if __name__ == "__main__":
     try:
         # QApplication.setStyle('plastique')
-        if not os.path.exits("wpa_supplicant.orig") :
-            shutil.copyfile("wpa_supplicant.example", "wpa_supplicant.orig")
+        if not os.path.exists("wpa_supplicant.conf.orig") :
+            shutil.copyfile("wpa_supplicant.conf.example", "wpa_supplicant.conf.orig")
         if not os.path.exists("wpa_supplicant.conf") :
-            shutil.copyfile("wpa_supplicant.orig", "wpa_supplicant.conf")
+            shutil.copyfile("wpa_supplicant.conf.orig", "wpa_supplicant.conf")
         myApp = QApplication(sys.argv)
         mainWindow = MainWindow()
         myApp.exec_()
-        os.system("sudo sh start-wpas.sh")
-        sys.exit(0)
     except NameError:
         print("Name Error:", sys.exc_info()[1])
     except SystemExit:
