@@ -7,7 +7,8 @@ import configurator
 from PySide import QtGui
 from PySide.QtGui import QWidget, QApplication, QMainWindow, QStatusBar, QTextEdit, \
     QAction, QIcon, QKeySequence, QMessageBox, QFormLayout, QLabel, QLineEdit,\
-    QGridLayout, QPushButton, QDesktopWidget, QFileDialog, QVBoxLayout, QCheckBox,QToolTip 
+    QGridLayout, QPushButton, QDesktopWidget, QFileDialog, QVBoxLayout, QCheckBox,QToolTip
+from PySide.QtCore import QSize
 	
 
 
@@ -166,12 +167,14 @@ class MainWindow(QMainWindow):
         row += 1
         ssidLabel = QLabel("SSID: ")
         self.ssId = QLineEdit()
+        self.ssId.setText("ZodiacWX_24GHz")
         gridLayout.addWidget(ssidLabel, row, 0)
         gridLayout.addWidget(self.ssId, row, 1)
 
         row += 1
         passwordLabel = QLabel("Password: ")
         self.password = QLineEdit()
+        self.password.setText("66666666")
         gridLayout.addWidget(passwordLabel, row, 0)
         gridLayout.addWidget(self.password, row, 1)
 
@@ -209,7 +212,9 @@ class MainWindow(QMainWindow):
 
 
         row += 1
-        onboardButton = QPushButton("Onboard", self)
+        onboardButton = QPushButton("Onboard Supplicant", self)
+        onboardButton.setIcon(QIcon("duck.png"))
+        onboardButton.setIconSize(QSize(100,100))
         onboardButton.clicked.connect(self.doOnboard)
 
         viewCertButton = QPushButton("View CA Certificate", self)
