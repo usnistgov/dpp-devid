@@ -10,11 +10,12 @@ else
         echo "PROJECT_HOME is set to '$PROJECT_HOME'"
 fi
 
-#sudo pkill wpa_supplicant
-#sudo cp wpa_supplicant.conf.orig wpa_supplicant.conf
-#sudo chown pi wpa_supplicant.conf
-#sudo /usr/local/sbin/wpa_supplicant  -c$PROJECT_HOME/scripts/supplicant/wpa_supplicant.conf -iwlan1 -Dnl80211,wext -dd -f /tmp/debug.txt &
-#sleep 3
+sudo iwconfig wlan1 channel 6
+sudo pkill wpa_supplicant
+sudo cp wpa_supplicant.conf.orig wpa_supplicant.conf
+sudo chown pi wpa_supplicant.conf
+sudo nohup /usr/local/sbin/wpa_supplicant  -c$PROJECT_HOME/scripts/supplicant/wpa_supplicant.conf -iwlan1 -Dnl80211,wext -dd -f /tmp/debug.txt > /tmp/wpas.log 2>&1 &
+sleep 15 
 
 pid=`pgrep wpa_supplicant`
 if [ -z ${pid+x} ]; then

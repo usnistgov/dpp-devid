@@ -61,8 +61,9 @@ if __name__ == "__main__":
         bootstrap_info = run_cmd(sta_clicmd + ["dpp_bootstrap_info" , bootstrapping_info_id])
         print("bootstrapping_info = " + bootstrap_info)
         print("enrollee: listen for dpp provisioning request\n")
-        #retval = run_cmd(sta_clicmd + ["dpp_listen" , str(2437)] )
-        retval = run_cmd(sta_clicmd + ["dpp_listen" , str(2412)] )
+        #retval = run_cmd(sta_clicmd + ["dpp_listen" , str(2412)] )
+        retval = run_cmd(sta_clicmd + ["dpp_listen" , str(2437)] )
+        #retval = run_cmd(sta_clicmd + ["dpp_listen" , str(2462)] )
         print(retval)
         while os.path.getsize(args.cf) == fsz :
             print("Waiting for configuration")

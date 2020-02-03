@@ -88,7 +88,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(qWidget)
 
         row = row + 1
-        self.rebootButton = QPushButton()
+        self.rebootButton = QPushButton("Click to reset")
         #self.rebootButton.setIcon(QIcon("duck.jpeg"))
         self.rebootButton.setIconSize(QSize(200,200))
         gridLayout.addWidget(self.rebootButton,row,0)
