@@ -203,7 +203,7 @@ class MainWindow(QMainWindow):
         row += 1
         caCertLabel = QLabel("CA Cert")
         self.caCertPath = QLineEdit()
-        self.caCertPath.setText("/home/pi/dpp-devid/test/test-devid/ca/certs/root.cert.pem")
+        self.caCertPath.setText(os.environ.get("PROJECT_HOME") + "/testcerts/ca/certs/root.cert.pem")
         certPathButton = QPushButton("Select")
         certPathButton.clicked.connect(self.doSelectCaCertPath)
         gridLayout.addWidget(caCertLabel, row, 0)
