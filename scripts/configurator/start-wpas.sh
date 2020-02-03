@@ -4,6 +4,7 @@ if [ -z ${PROJECT_HOME+x} ]; then
 else
 	echo "PROJECT_HOME is set to '$PROJECT_HOME'"
 fi
+sudo iwconfig wlan1 channel 6
 sudo rm -f /tmp/debug.txt
 sudo pkill wpa_supplicant
 echo "Starting wpa_supplicant"
