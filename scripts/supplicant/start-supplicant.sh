@@ -25,5 +25,6 @@ else
 fi
 sudo ifconfig wlan1 0
 sudo -E python supplicant-gui.py &
-sudo -E python supplicant.py --if wlan1 --pkey $PROJECT_HOME/test/DevID50/DevIDSecrets/IDevID50.key.der --cf ./wpa_supplicant.conf
+#sudo -E python supplicant.py --if wlan1 --pkey $PROJECT_HOME/test/DevID50/DevIDSecrets/IDevID50.key.der --cf ./wpa_supplicant.conf
 #sudo python supplicant.py --if wlan1 --pkey $PROJECT_HOME/test/test-devid/iDevID/private/DevID.key.der --cf ./wpa_supplicant.conf
+sudo -E python supplicant.py --if wlan1 --pkey $PROJECT_HOME/testcerts/iDevID/private/DevID.key.der --cf ./wpa_supplicant.conf
