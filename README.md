@@ -63,7 +63,8 @@ Copy the config files for building and build wpa-supplicant / hostapd and build 
    
        sh build.sh
 
-Configurator: Install zbar-tools (for reading qr codes -- configurator only)
+Configurator: Install zbar-tools (for reading qr codes -- configurator only). An example qr code
+png file is provided for test purposes.
 
         sudo apt-get install zbar-tools
         sudo apt-get install libzbar-dev
@@ -73,11 +74,11 @@ COnfigurator: Install the python wrapper for zbar and the python image library t
         pip install Pillow
         pip install zbarlight
 
-Configurator: Install pyside (for GUI -- configurator only)
+Configurator and supplicant: Install pyside (for demonstration GUI)
 
          sudo apt-get install python-pyside
 
-Configurator and Enrolle: Install netifaces to read the network interface MAC address
+Configurator and Supplicant: Install netifaces to read the network interface MAC address
 
         pip install netifaces
 
@@ -85,15 +86,11 @@ Set the PROJECT_HOME enviornment variable to the place where you installed this 
 
 Enrollee: copy wpa_supplicant.example into wpa_supplicant.orig, Edit wpa_supplicant.orig 
 and point it at the DevId certificate.  This is done for you in the start_wpas.sh script.
-
-       cd scripts/supplicant 
-       ./start_wpas.sh
-
-Enrollee: Start the enrolle as follows. 
+Start the enrolle as follows. 
 
          cd scripts/supplicant 
          # Start the supplicant
-         sudo python enrollee.py --if wlan1 --pkey $PROJECT_HOME/test/DevID50/DevIDSecrets/IDevID50.key.der --cf ./wpa_supplicant.conf
+         ./start-supplicant
 
 Configurator: start wpa supplicant
 
@@ -102,7 +99,14 @@ Configurator: start wpa supplicant
 
 Configurator:  start the configurator.
          
-        sudo -E python configurator_gui.py
+        sudo -E python configurator-gui.py
+
+Select the qr code and click on Onboard. You should see the supplicant duck find it's mother :-)
+The supplicant will issue a dhclient request and join the network.
+
+# Known bugs
+
+The onboarding is not 100 % reliable. If it fails, reboot the supplicant. 
 
 
 # Limitations
@@ -117,7 +121,7 @@ Configurator:  start the configurator.
 ## Notes ##
 
 If you are using a raspberry Pi3 to test this out, please use a USB wireless card. The on board wireless 
-card does not support DPP.
+card does not support DPP (the device driver needs to support action frames -- which it does not).
 
 
 ## Copyrights and Disclaimers ##
