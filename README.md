@@ -9,6 +9,7 @@ Following are the submodules included:
 
    https://github.com/ranganathanm/hostap
    
+You can optionally download the following to generate your own device certificates:
    
    https://github.com/MonikaSinghNIST/iDevIDCerts
 
