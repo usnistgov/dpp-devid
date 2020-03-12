@@ -7,11 +7,11 @@ Important: This is a proposed extension to wifi-easyconnect (AKA DPP) but it is 
 This project requires the fork of hostap with support for iDevID and 802.1AR cert generation scripts. 
 Following are the submodules included:
 
-   https://github.com/ranganathanm/hostap
+   https://github.com/usnistgov/hostap
    
 You can optionally download the following to generate your own device certificates:
    
-   https://github.com/MonikaSinghNIST/iDevIDCerts
+   https://github.com/usnistgov/iDevIDCerts
 
 
 The following is a summary of the interactions exercised by the script (via wpa\_supplicant):
