@@ -1,8 +1,8 @@
 # dpp-devid
 
-This repository publishes a user interface, certificates and scripts to test out DPP with device iD support.
+This project is part of the [Trustworthy Networks of Things](https://www.nist.gov/programs-projects/trustworthy-networks-things) project at NIST.
 
-Important: This is a proposed extension to wifi-easyconnect (AKA DPP) but it is not part of the standard.
+This repository publishes a user interface, certificates and scripts to test out DPP with device iD support. Important: This is a proposed extension to wifi-easyconnect (AKA DPP) but it is not part of the standard.
 
 This project requires the fork of hostap with support for iDevID and 802.1AR cert generation scripts. 
 Following are the submodules included:
